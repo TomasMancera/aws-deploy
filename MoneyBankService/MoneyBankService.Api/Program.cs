@@ -12,6 +12,17 @@ var builder = WebApplication.CreateBuilder(args);
 // Add the DB Context
 builder.Services.AddDbContext<AppDbContext>(options => options.UseMySQL(builder.Configuration.GetConnectionString("CnnStr")!));
 
+var corsPolicy = "AllowFrontend";
+
+builder.Services.AddCors(options =>
+{
+    options.AddPolicy(name: corsPolicy, policy =>
+    {
+        policy.WithOrigins("http://3.138.32.14:8000")
+              .AllowAnyHeader()
+              .AllowAnyMethod();
+    });
+});
 // Add services to the container.
 builder.Services.AddControllers().ConfigureApiBehaviorOptions(options =>
 {
@@ -50,6 +61,7 @@ if (app.Environment.IsDevelopment())
 app.UseExceptionMiddleware();
 
 app.UseHttpsRedirection();
+app.UseCors(corsPolicy);
 
 app.UseAuthorization();
 
